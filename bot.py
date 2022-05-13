@@ -1,6 +1,9 @@
+import json
 import logging
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import os
+
+import requests
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 PORT = int(os.environ.get('PORT', 5000))
 TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
@@ -8,6 +11,22 @@ TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+url = "https://www.rami-levy.co.il/api/v2/cart"
+
+payload = json.dumps({
+    "store": "412",
+    "isClub": 0,
+    "supplyAt": "2022-05-14T00:00:00.000Z",
+    "items": {
+        "35": "1.00"
+    },
+    "meta": None
+})
+headers = {
+    'ecomtoken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvYXBpLXByb2QucmFtaS1sZXZ5LmNvLmlsIiwiYXVkIjoiaHR0cHM6XC9cL2FwaS1wcm9kLnJhbWktbGV2eS5jby5pbCIsImlhdCI6MTY1MjQ0NDE2MywibmJmIjoxNjUyNDQ0MjIzLCJleHAiOjE2NTI1MzA1NjMsImlkIjoxNDMyNTAsImVtYWlsIjoic2hhaXVuZ2FyQGdtYWlsLmNvbSIsImNpZCI6IjE4MDAyMzMwMSJ9.2o2o_i9EaVQRbu47Y-JfOoMHj6d517tQpp5FioGN2ac',
+    'Content-Type': 'application/json'
+}
 
 
 def start(update, context):
@@ -22,6 +41,11 @@ def help(update, context):
 
 def echo(update, context):
     """Echo the user message."""
+    item = update.message.text
+    if item == "banana":
+        response = requests.request("POST", url, headers=headers, data=payload)
+        update.message.reply_text("added the item")
+        return
     update.message.reply_text(update.message.text)
 
 
