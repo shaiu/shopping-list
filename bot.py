@@ -44,6 +44,7 @@ def echo(update, context):
     item = update.message.text
     if item == "banana":
         response = requests.request("POST", url, headers=headers, data=payload)
+        logger.info("response from ramy %s", response)
         update.message.reply_text("added the item")
         return
     update.message.reply_text(update.message.text)
