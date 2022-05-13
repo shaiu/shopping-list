@@ -24,7 +24,7 @@ payload = json.dumps({
     "meta": None
 })
 headers = {
-    'ecomtoken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvYXBpLXByb2QucmFtaS1sZXZ5LmNvLmlsIiwiYXVkIjoiaHR0cHM6XC9cL2FwaS1wcm9kLnJhbWktbGV2eS5jby5pbCIsImlhdCI6MTY1MjQ0NDE2MywibmJmIjoxNjUyNDQ0MjIzLCJleHAiOjE2NTI1MzA1NjMsImlkIjoxNDMyNTAsImVtYWlsIjoic2hhaXVuZ2FyQGdtYWlsLmNvbSIsImNpZCI6IjE4MDAyMzMwMSJ9.2o2o_i9EaVQRbu47Y-JfOoMHj6d517tQpp5FioGN2ac',
+    'ecomtoken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvYXBpLXByb2QucmFtaS1sZXZ5LmNvLmlsIiwiYXVkIjoiaHR0cHM6XC9cL2FwaS1wcm9kLnJhbWktbGV2eS5jby5pbCIsImlhdCI6MTY1MjQ0NjA3NCwibmJmIjoxNjUyNDQ2MTM0LCJleHAiOjE2NTI1MzI0NzQsImlkIjoxNDMyNTAsImVtYWlsIjoic2hhaXVuZ2FyQGdtYWlsLmNvbSIsImNpZCI6IjE4MDAyMzMwMSJ9.do61mydaFaJ_9XjRc8Vs9FzA6YIYOCX6yogTIsh4L88',
     'Content-Type': 'application/json'
 }
 
