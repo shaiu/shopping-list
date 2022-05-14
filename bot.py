@@ -5,8 +5,10 @@ import os
 import requests
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
+WEBHOOK_URL = os.environ.get('WEBHOOK_URL')
 PORT = int(os.environ.get('PORT', 5000))
 TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+RAMY_TOKEN = os.environ.get('RAMY_TOKEN')
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -24,7 +26,7 @@ payload = json.dumps({
     "meta": None
 })
 headers = {
-    'ecomtoken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvYXBpLXByb2QucmFtaS1sZXZ5LmNvLmlsIiwiYXVkIjoiaHR0cHM6XC9cL2FwaS1wcm9kLnJhbWktbGV2eS5jby5pbCIsImlhdCI6MTY1MjQ0NjA3NCwibmJmIjoxNjUyNDQ2MTM0LCJleHAiOjE2NTI1MzI0NzQsImlkIjoxNDMyNTAsImVtYWlsIjoic2hhaXVuZ2FyQGdtYWlsLmNvbSIsImNpZCI6IjE4MDAyMzMwMSJ9.do61mydaFaJ_9XjRc8Vs9FzA6YIYOCX6yogTIsh4L88',
+    'ecomtoken': RAMY_TOKEN,
     'Content-Type': 'application/json'
 }
 
@@ -74,7 +76,7 @@ def main():
     updater.start_webhook(listen="0.0.0.0",
                           port=PORT,
                           url_path=TOKEN,
-                          webhook_url=f'https://powerful-forest-13346.herokuapp.com/{TOKEN}')
+                          webhook_url=f'{WEBHOOK_URL}{TOKEN}')
     updater.idle()
 
 
