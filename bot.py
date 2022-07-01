@@ -9,12 +9,24 @@ WEBHOOK_URL = os.environ.get('WEBHOOK_URL')
 PORT = int(os.environ.get('PORT', 5000))
 TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 RAMY_TOKEN = os.environ.get('RAMY_TOKEN')
+RAMY_USER = os.environ.get('RAMY_USER')
+RAMY_PASS = os.environ.get('RAMY_PASS')
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 url = "https://www.rami-levy.co.il/api/v2/cart"
+
+token_url = "https://api-prod.rami-levy.co.il/api/v2/site/auth/login"
+token_payload = json.dumps({
+    "username": RAMY_USER,
+    "password": RAMY_PASS,
+    "id_delivery_times": None
+})
+json_headers = {
+    'Content-Type': 'application/json'
+}
 
 payload = json.dumps({
     "store": "412",
@@ -26,7 +38,7 @@ payload = json.dumps({
     "meta": None
 })
 headers = {
-    'ecomtoken': RAMY_TOKEN,
+    'ecomtoken': "",
     'Content-Type': 'application/json'
 }
 
@@ -45,11 +57,25 @@ def echo(update, context):
     """Echo the user message."""
     item = update.message.text
     if item == "banana":
+        headers['ecomtoken'] = get_token()
         response = requests.request("POST", url, headers=headers, data=payload)
         logger.info("response from ramy %s", response)
-        update.message.reply_text("added the item")
         return
+    update.message.reply_text("added the item")
     update.message.reply_text(update.message.text)
+
+
+def add_item(item):
+    if item == "banana":
+        headers['ecomtoken'] = get_token()
+        response = requests.request("POST", url, headers=headers, data=payload)
+        logger.info("response from ramy %s", response)
+        return
+
+
+def get_token():
+    response = requests.request("POST", token_url, headers=json_headers, data=token_payload)
+    return response.json()['user']['token']
 
 
 def error(update, context):
