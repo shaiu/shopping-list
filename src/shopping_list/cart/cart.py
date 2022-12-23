@@ -1,9 +1,10 @@
-from src.shopping_list.catalog import catalog
 import re
 import requests
 import json
 import logging
 import os
+
+from shopping_list.catalog import catalog
 
 logger = logging.getLogger(__name__)
 

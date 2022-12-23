@@ -5,8 +5,10 @@ WORKDIR /usr/src/app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY src ./
+
+ENV PYTHONPATH=/usr/src/app/shopping_list:/usr/src/app
 
 EXPOSE 5000
 
-CMD [ "python", "./bot.py" ]
+CMD [ "python", "./shopping_list/bot.py" ]

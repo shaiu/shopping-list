@@ -7,3 +7,5 @@ name = "shopping-list"
 
 [tool.pytest.ini_options]
 pythonpath = "src"
+
+

@@ -5,13 +5,12 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram.parsemode import ParseMode
 
-from src.shopping_list.cart import cart
-from src.shopping_list.catalog import catalog
+from cart import cart
+from catalog import catalog
 
 WEBHOOK_URL = os.environ.get('WEBHOOK_URL')
 PORT = int(os.environ.get('PORT', 8443))
 TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
-RAMY_TOKEN = os.environ.get('RAMY_TOKEN')
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -69,7 +68,6 @@ def button(update: Update, context) -> None:
     logger.info(f"adding item <{context.bot_data['items_reverse'][item]}> to cart")
     cart.add_local_item(item)
     query.delete_message()
-    update.message.reply_text("Added item to cart")
 
 
 def error(update, context):
