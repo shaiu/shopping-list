@@ -20,7 +20,7 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-  DOCKER_TARGET_PLATFORM: linux/arm/v7
+  DOCKER_TARGET_PLATFORM: linux/arm/v6
 
 
 jobs:
@@ -81,6 +81,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          platform: ${{ env.DOCKER_TARGET_PLATFORM }}
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
