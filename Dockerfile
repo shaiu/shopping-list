@@ -1,4 +1,4 @@
-FROM python:3
+FROM arm32v6/python:3
 
 WORKDIR /usr/src/app
 
