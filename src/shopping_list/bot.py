@@ -13,7 +13,8 @@ PORT = int(os.environ.get('PORT', 8443))
 TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 
 # Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -41,7 +42,7 @@ def show_cart(update, context):
 
 def load_cart(update, context):
     logger.info("loading cart to site")
-    cart.add_items_cart(list(map(lambda local_item: context.bot_data["items"][local_item], cart.get_local_items())))
+    cart.add_items_cart()
     update.message.reply_text("https://www.rami-levy.co.il/he")
 
 
@@ -54,7 +55,8 @@ def clear_cart(update, context):
 def add_item(update, context):
     item = update.message.text
     logger.info(f"got text from user <{item}>")
-    kblist = list(map(lambda cart_item: [InlineKeyboardButton(cart_item[0], callback_data=cart_item[1])],
+    kblist = list(map(lambda cart_item:
+                      [InlineKeyboardButton(cart_item[0], callback_data=cart_item[1])],
                       cart.get_items(context.bot_data, item)))
     reply_markup = InlineKeyboardMarkup(kblist)
 

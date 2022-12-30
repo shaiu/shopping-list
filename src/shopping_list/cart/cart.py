@@ -1,8 +1,9 @@
-import re
-import requests
 import json
 import logging
 import os
+import re
+
+import requests
 
 from shopping_list.catalog import catalog
 
@@ -67,7 +68,7 @@ def add_local_item(item):
     local_cart_items.append(item)
 
 
-def add_items_cart(items):
+def add_items_cart():
     logger.info("adding items to online cart")
     cart_items = {}
     for item in local_cart_items:
