@@ -1,3 +1,4 @@
+"""Rami Levy cart methods"""
 import json
 import logging
 import os
@@ -9,8 +10,8 @@ from shopping_list.catalog import catalog
 
 logger = logging.getLogger(__name__)
 
-cart_url = "https://www.rami-levy.co.il/api/v2/cart"
-token_url = "https://api-prod.rami-levy.co.il/api/v2/site/auth/login"
+CART_URL = "https://www.rami-levy.co.il/api/v2/cart"
+TOKEN_URL = "https://api-prod.rami-levy.co.il/api/v2/site/auth/login"
 
 json_headers = {
     'Content-Type': 'application/json'
@@ -40,10 +41,17 @@ payload = {
     "meta": None
 }
 
-local_cart_items = []
+LOCAL_CART_ITEMS = []
 
 
 def get_items(bot_data, cart_item):
+    """
+    get all items that match the cart item
+    this method compiles the cart_item to a regex and then looks for matches from the catalog
+    :param bot_data: bot context that holds the items from the catalog
+    :param cart_item: the item we are looking for
+    :return:
+    """
     if len(bot_data) == 0:
         bot_data["items"], bot_data["items_reverse"] = catalog.get_all_items()
     items = bot_data["items"]
@@ -56,32 +64,38 @@ def get_items(bot_data, cart_item):
 
 
 def get_local_items():
-    return local_cart_items
+    """
+    get local cache of items
+    :return: local_cart_items
+    """
+    return LOCAL_CART_ITEMS
 
 
 def clear_local_items():
-    local_cart_items.clear()
+    """
+    clear local cache
+    """
+    LOCAL_CART_ITEMS.clear()
 
 
 def add_local_item(item):
-    global local_cart_items
-    local_cart_items.append(item)
+    """
+    add item to local cache
+    :param item: item to add
+    """
+    LOCAL_CART_ITEMS.append(item)
 
 
 def add_items_cart():
+    """
+    add items to Rami Levi cart
+    """
     logger.info("adding items to online cart")
     cart_items = {}
-    for item in local_cart_items:
+    for item in LOCAL_CART_ITEMS:
         cart_items[item] = "1.00"
-    # headers['ecomtoken'] = get_token()
-    headers[
-        'ecomtoken'] = ECOMTOKEN
+    headers['ecomtoken'] = ECOMTOKEN
     payload["items"] = cart_items
-    response = requests.request("POST", cart_url, headers=headers, data=json.dumps(payload))
+    response = requests.request(
+        "POST", CART_URL, headers=headers, data=json.dumps(payload), timeout=10)
     logger.info("response from ramy\n %s", response.json())
-
-
-def get_token():
-    logger.info("getting token")
-    response = requests.request("POST", token_url, headers=json_headers, data=token_payload)
-    return response.json()['user']['token']

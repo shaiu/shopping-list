@@ -1,3 +1,4 @@
+"""Bot commands for the Ramy Levy telegram bot"""
 import logging
 import os
 
@@ -19,6 +20,11 @@ logger = logging.getLogger(__name__)
 
 
 def start(update, context):
+    """
+    start command to load all items to memory
+    :param update: telegram api update
+    :param context: telegram api context
+    """
     logger.info("starting")
     context.bot_data["items"], context.bot_data["items_reverse"] = catalog.get_all_items()
     logger.info("loaded all items to context")
@@ -26,6 +32,11 @@ def start(update, context):
 
 
 def show_cart(update, context):
+    """
+    show cart command to show the current list in memory
+    :param update: telegram api update
+    :param context: telegram api context
+    """
     logger.info("showing cart")
     i = 1
     text = ""
@@ -36,25 +47,40 @@ def show_cart(update, context):
         logger.info("no items in cart")
         update.message.reply_text("no items in cart")
         return
-    logger.info(f"items in cart: {text}")
+    logger.info("items in cart: %s", text)
     update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
 
 def load_cart(update, context):
+    """
+    load cart to Rami Levy site
+    :param update: telegram api update
+    :param context: telegram api context
+    """
     logger.info("loading cart to site")
     cart.add_items_cart()
     update.message.reply_text("https://www.rami-levy.co.il/he")
 
 
 def clear_cart(update, context):
+    """
+    clear cart command
+    :param update: telegram api update
+    :param context: telegram api context
+    """
     logger.info("clearing cart")
     cart.clear_local_items()
     update.message.reply_text("Cart is cleared")
 
 
 def add_item(update, context):
+    """
+    add item to cart
+    :param update: telegram api update
+    :param context: telegram api context
+    """
     item = update.message.text
-    logger.info(f"got text from user <{item}>")
+    logger.info("got text from user <%s>", item)
     kblist = list(map(lambda cart_item:
                       [InlineKeyboardButton(cart_item[0], callback_data=cart_item[1])],
                       cart.get_items(context.bot_data, item)))
@@ -64,10 +90,15 @@ def add_item(update, context):
 
 
 def button(update: Update, context) -> None:
+    """
+    add the chosen item to memory
+    :param update: telegram api update
+    :param context: telegram api context
+    """
     query = update.callback_query
     query.answer()
     item = query.data
-    logger.info(f"adding item <{context.bot_data['items_reverse'][item]}> to cart")
+    logger.info("adding item <%s> to cart", context.bot_data['items_reverse'][item])
     cart.add_local_item(item)
     query.delete_message()
 
@@ -80,20 +111,18 @@ def error(update, context):
 def main():
     """Start the bot."""
     updater = Updater(TOKEN, use_context=True)
-    dp = updater.dispatcher
+    dispatcher = updater.dispatcher
 
-    # on different commands - answer in Telegram
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("cart", show_cart))
-    dp.add_handler(CommandHandler("load_cart", load_cart))
-    dp.add_handler(CommandHandler("clear_cart", clear_cart))
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("cart", show_cart))
+    dispatcher.add_handler(CommandHandler("load_cart", load_cart))
+    dispatcher.add_handler(CommandHandler("clear_cart", clear_cart))
 
-    # on noncommand i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.text, add_item))
-    dp.add_handler(CallbackQueryHandler(button))
+    dispatcher.add_handler(MessageHandler(Filters.text, add_item))
+    dispatcher.add_handler(CallbackQueryHandler(button))
 
     # log all errors
-    dp.add_error_handler(error)
+    dispatcher.add_error_handler(error)
 
     # Start the Bot
     updater.start_webhook(listen="0.0.0.0",
