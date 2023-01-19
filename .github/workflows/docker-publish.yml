@@ -18,7 +18,7 @@ on:
 env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: shopping-list
-  DOCKER_TARGET_PLATFORM: linux/arm/v6
+  DOCKER_TARGET_PLATFORM: linux/arm/v6,linux/amd64
 
 
 jobs:
