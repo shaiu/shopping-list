@@ -1,0 +1,4 @@
+flask~=2.2.2
+flask-restful
+requests~=2.27.1
+responses~=0.22.0
