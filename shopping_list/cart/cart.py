@@ -2,11 +2,8 @@
 import json
 import logging
 import os
-import re
 
 import requests
-
-from shopping_list.catalog import catalog
 
 logger = logging.getLogger(__name__)
 
@@ -44,26 +41,7 @@ payload = {
 LOCAL_CART_ITEMS = []
 
 
-def get_items(bot_data, cart_item):
-    """
-    get all items that match the cart item
-    this method compiles the cart_item to a regex and then looks for matches from the catalog
-    :param bot_data: bot context that holds the items from the catalog
-    :param cart_item: the item we are looking for
-    :return:
-    """
-    if len(bot_data) == 0:
-        bot_data["items"], bot_data["items_reverse"] = catalog.get_all_items()
-    items = bot_data["items"]
-    item_reg = re.compile(cart_item)
-    cart_items = []
-    for item in items.items():
-        if item_reg.search(item[0]):
-            cart_items.append(item)
-    return cart_items
-
-
-def get_local_items():
+def get_cart_items():
     """
     get local cache of items
     :return: local_cart_items
@@ -71,14 +49,14 @@ def get_local_items():
     return LOCAL_CART_ITEMS
 
 
-def clear_local_items():
+def clear_cart_items():
     """
     clear local cache
     """
     LOCAL_CART_ITEMS.clear()
 
 
-def add_local_item(item):
+def add_cart_item(item):
     """
     add item to local cache
     :param item: item to add
@@ -86,9 +64,9 @@ def add_local_item(item):
     LOCAL_CART_ITEMS.append(item)
 
 
-def add_items_cart():
+def upload_items_cart():
     """
-    add items to Rami Levi cart
+    upload items to Rami Levi cart
     """
     logger.info("adding items to online cart")
     cart_items = {}

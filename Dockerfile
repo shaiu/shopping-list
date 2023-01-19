@@ -1,14 +1,19 @@
-FROM python:3
+FROM python:3.8-slim-buster
 
-WORKDIR /usr/src/app
+# Set the working directory in the container
+WORKDIR /app
 
-COPY requirements.txt ./
-RUN pip install -r requirements.txt
+# Copy the requirements file into the container
+COPY requirements.txt .
 
-COPY src ./
+# Install the dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-ENV PYTHONPATH=/usr/src/app/shopping_list:/usr/src/app
+# Copy the rest of the application code into the container
+COPY . .
 
+# Expose the port that the application will run on
 EXPOSE 5000
 
-CMD [ "python", "./shopping_list/bot.py" ]
+# Start the application
+CMD ["flask", "run", "--host=0.0.0.0"]

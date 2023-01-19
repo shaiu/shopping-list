@@ -6,6 +6,6 @@ build-backend = "hatchling.build"
 name = "shopping-list"
 
 [tool.pytest.ini_options]
-pythonpath = "src"
+pythonpath = "shopping_list"
 
 
