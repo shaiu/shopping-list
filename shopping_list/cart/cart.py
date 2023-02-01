@@ -71,9 +71,10 @@ def upload_items_cart():
     logger.info("adding items to online cart")
     cart_items = {}
     for item in LOCAL_CART_ITEMS:
-        cart_items[item] = "1.00"
+        cart_items[item["id"]] = "1.00"
     headers['ecomtoken'] = ECOMTOKEN
     payload["items"] = cart_items
     response = requests.request(
         "POST", CART_URL, headers=headers, data=json.dumps(payload), timeout=10)
     logger.info("response from ramy\n %s", response.json())
+    logger.info("https://www.rami-levy.co.il/he")
