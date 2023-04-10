@@ -4,8 +4,10 @@ import logging
 import os
 import pathlib
 import re
+import time
 
 import requests
+import requests_random_user_agent
 
 logger = logging.getLogger(__name__)
 
@@ -13,14 +15,43 @@ CATALOG_URL = "https://www.rami-levy.co.il/api/catalog?"
 
 STORE = os.environ.get('STORE')
 
-payload = {
+PAYLOAD = {
     "store": STORE,
 }
 
-payload_from = {
+PAYLOAD_FROM = {
     "store": STORE,
     "from": 0
 }
+
+
+def load_department(department, catalog_url):
+    department_items = []
+    payload = PAYLOAD.copy()
+    payload_from= PAYLOAD_FROM.copy()
+    payload["d"] = department
+    payload_from["d"] = department
+    logger.info(f"department {department}")
+    response = requests.request("POST", catalog_url, data=payload, timeout=10)
+    try:
+        total = response.json()['total']
+    except requests.exceptions.JSONDecodeError:
+        logger.error("no total")
+        return []
+    logger.info(f"total is {total} department {department}")
+    for i in range(0, total, 30):
+        logger.info(f"going over items from {i} department {department}")
+        payload_from["from"] = i
+        response = requests.request("POST", catalog_url, data=payload_from, timeout=10)
+        try:
+            data = response.json()['data']
+            department_items.extend(list(map(lambda x: {'name': x['name'], 'id': x['id']}, data)))
+        except requests.exceptions.JSONDecodeError:
+            logger.error(f"not json - department <{department}>, payload_from {payload_from}, status_code {response.status_code}, headers {response.headers}")
+            payload_from_from = payload_from['from']
+            with open(os.path.join(f'error_response_{department}_{payload_from_from}.html'), mode='w') as f:
+                f.write(response.text)
+    return department_items
 
 
 class Catalog:
@@ -51,13 +82,8 @@ class Catalog:
         logger.info("getting all items from site")
         with open(os.path.join(self.path, 'departments.json'), encoding="utf-8") as file:
             departments = json.load(file)
+        logger.info(f"departments are {departments}")
+
         for department in departments:
-            payload["d"] = department
-            payload_from["d"] = department
-            response = requests.request("POST", self.catalog_url, data=payload, timeout=10)
-            total = response.json()['total']
-            for i in range(0, total, 30):
-                payload_from["from"] = i
-                response = requests.request("POST", self.catalog_url, data=payload_from, timeout=10)
-                data = response.json()['data']
-                self._all_items.extend(list(map(lambda x: {'name': x['name'], 'id': x['id']}, data)))
+            self._all_items.extend(load_department(department, self.catalog_url))
+            time.sleep(20)
