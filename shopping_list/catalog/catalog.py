@@ -7,7 +7,6 @@ import re
 import time
 
 import requests
-import requests_random_user_agent
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +44,14 @@ def load_department(department, catalog_url):
         response = requests.request("POST", catalog_url, data=payload_from, timeout=10)
         try:
             data = response.json()['data']
-            department_items.extend(list(map(lambda x: {'name': x['name'], 'id': x['id']}, data)))
+            department_items.extend(
+                list(map(
+                    lambda x:
+                    {
+                        'name': x['name'],
+                        'id': x['id'],
+                        'price': x['price']['price'],
+                    }, data)))
         except requests.exceptions.JSONDecodeError:
             logger.error(f"not json - department <{department}>, payload_from {payload_from}, status_code {response.status_code}, headers {response.headers}")
             payload_from_from = payload_from['from']
@@ -69,9 +75,10 @@ class Catalog:
         :return:
         """
         item_reg = re.compile(cart_item)
-        return list(filter(lambda item: item_reg.search(item["name"]), self._all_items))
+        filtered_list = list(filter(lambda item: item_reg.search(item["name"]), self._all_items))
+        return sorted(filtered_list, key=lambda x: x['price'])
 
-    def load_all_items(self):
+    def load_all_items(self, sleep_time=20):
         """
         Gets all items from all departments (from file departments.json)
         from the CATALOG_URL
@@ -86,4 +93,4 @@ class Catalog:
 
         for department in departments:
             self._all_items.extend(load_department(department, self.catalog_url))
-            time.sleep(20)
+            time.sleep(sleep_time)
