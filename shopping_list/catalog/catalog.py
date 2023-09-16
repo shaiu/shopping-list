@@ -51,6 +51,7 @@ def load_department(department, catalog_url):
                         'name': x['name'],
                         'id': x['id'],
                         'price': x['price']['price'],
+                        'department': x['department']['name'],
                     }, data)))
         except requests.exceptions.JSONDecodeError:
             logger.error(f"not json - department <{department}>, payload_from {payload_from}, status_code {response.status_code}, headers {response.headers}")

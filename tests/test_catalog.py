@@ -18,6 +18,9 @@ def test_load_all_items():
     items = cat.search_for_item('תפוח')
     assert len(items) == 14
     assert items[0]['id'] == 13
+    assert items[0]['name'] == 'תפוח אדמה לבן ארוז'
+    assert items[0]['price'] == 3.9
+    assert items[0]['department'] == 'פירות וירקות'
 
 
 def has_duplicates(lst):
